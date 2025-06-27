@@ -66,6 +66,17 @@ function App() {
           }
         });
         
+        // Create a mapping of user IDs to names
+        const userIdToName = new Map<string, string>();
+        users.forEach(user => userIdToName.set(user.id, user.name));
+        
+        // Enrich pending approvals with user names if not provided by backend
+        const enrichedApprovals = pendingApprovals.map(approval => ({
+          ...approval,
+          employeeName: approval.employeeName || userIdToName.get(approval.employeeId) || approval.employeeId,
+          assignedToName: approval.assignedToName || (approval.assignedTo ? userIdToName.get(approval.assignedTo) || approval.assignedTo : undefined)
+        }));
+        
         setState(prev => ({
           ...prev,
           vacationDays: vacationDaySet,
@@ -75,7 +86,7 @@ function App() {
           users,
           selectedUserId: users.length > 0 ? users[0].id : '',
           usersLoading: false,
-          pendingApprovals,
+          pendingApprovals: enrichedApprovals,
           approvalsLoading: false,
         }));
         
@@ -232,12 +243,23 @@ function App() {
         }
       });
       
+      // Create a mapping of user IDs to names
+      const userIdToName = new Map<string, string>();
+      state.users.forEach(user => userIdToName.set(user.id, user.name));
+      
+      // Enrich pending approvals with user names if not provided by backend
+      const enrichedApprovals = pendingApprovals.map(approval => ({
+        ...approval,
+        employeeName: approval.employeeName || userIdToName.get(approval.employeeId) || approval.employeeId,
+        assignedToName: approval.assignedToName || (approval.assignedTo ? userIdToName.get(approval.assignedTo) || approval.assignedTo : undefined)
+      }));
+      
       setState(prev => ({
         ...prev,
         vacationDays: vacationDaySet,
         originalVacationDays: new Set(vacationDaySet),
         vacationDayStatuses: statusMap,
-        pendingApprovals,
+        pendingApprovals: enrichedApprovals,
       }));
     } catch (error) {
       setState(prev => ({
@@ -319,57 +341,63 @@ function App() {
         </div>
       )}
       
-      <VacationCalendar 
-        year={currentYear}
-        vacationDays={state.vacationDays}
-        vacationDayStatuses={state.vacationDayStatuses}
-        onDayClick={handleDayClick}
-      />
-      
-      <div className="user-assignment">
-        <label htmlFor="user-select">担当者:</label>
-        <select 
-          id="user-select"
-          value={state.selectedUserId}
-          onChange={handleUserChange}
-          disabled={state.usersLoading}
-        >
-          {state.usersLoading ? (
-            <option>ユーザーを読み込み中...</option>
-          ) : state.users.length > 0 ? (
-            state.users.map(user => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))
-          ) : (
-            <option>利用可能なユーザーがありません</option>
-          )}
-        </select>
+      <div className="main-layout">
+        <div className="calendar-section">
+          <VacationCalendar 
+            year={currentYear}
+            vacationDays={state.vacationDays}
+            vacationDayStatuses={state.vacationDayStatuses}
+            onDayClick={handleDayClick}
+          />
+        </div>
+        
+        <div className="controls-section">
+          <div className="user-assignment">
+            <label htmlFor="user-select">担当者:</label>
+            <select 
+              id="user-select"
+              value={state.selectedUserId}
+              onChange={handleUserChange}
+              disabled={state.usersLoading}
+            >
+              {state.usersLoading ? (
+                <option>ユーザーを読み込み中...</option>
+              ) : state.users.length > 0 ? (
+                state.users.map(user => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))
+              ) : (
+                <option>利用可能なユーザーがありません</option>
+              )}
+            </select>
+          </div>
+          
+          <div className="actions">
+            <button 
+              className={`save-button ${hasUnsavedChanges() ? 'has-changes' : ''}`}
+              onClick={handleSave}
+              disabled={state.saving || !hasUnsavedChanges()}
+            >
+              {state.saving ? '保存中...' : hasUnsavedChanges() ? '変更を保存' : '変更なし'}
+            </button>
+          </div>
+          
+          <MyRequests 
+            vacationRequests={uniqueVacationRequests}
+            onRequestDeletion={handleRequestDeletion}
+          />
+          
+          <AdminApprovals 
+            pendingApprovals={state.pendingApprovals}
+            onApproveVacation={handleApproveVacation}
+            onRejectVacation={handleRejectVacation}
+            onApproveDeletion={handleApproveDeletion}
+            onRejectDeletion={handleRejectDeletion}
+          />
+        </div>
       </div>
-      
-      <div className="actions">
-        <button 
-          className={`save-button ${hasUnsavedChanges() ? 'has-changes' : ''}`}
-          onClick={handleSave}
-          disabled={state.saving || !hasUnsavedChanges()}
-        >
-          {state.saving ? '保存中...' : hasUnsavedChanges() ? '変更を保存' : '変更なし'}
-        </button>
-      </div>
-      
-      <MyRequests 
-        vacationRequests={uniqueVacationRequests}
-        onRequestDeletion={handleRequestDeletion}
-      />
-      
-      <AdminApprovals 
-        pendingApprovals={state.pendingApprovals}
-        onApproveVacation={handleApproveVacation}
-        onRejectVacation={handleRejectVacation}
-        onApproveDeletion={handleApproveDeletion}
-        onRejectDeletion={handleRejectDeletion}
-      />
     </div>
   );
 }

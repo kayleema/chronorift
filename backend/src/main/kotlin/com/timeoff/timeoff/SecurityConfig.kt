@@ -6,14 +6,11 @@ import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.config.Customizer
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter
-import org.springframework.security.config.annotation.web.invoke
 
 @Configuration
 @EnableWebSecurity
 @Profile("!test")
-class SecurityConfig {
+class SecurityConfig(private val userRepository: UserRepository) {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
@@ -29,7 +26,7 @@ class SecurityConfig {
             }
             .oauth2Login { oauth2 ->
                 oauth2
-                    .defaultSuccessUrl("/api/vacation", true)
+                    .successHandler(CustomOAuth2SuccessHandler(userRepository))
             }
             .logout { logout ->
                 logout

@@ -15,10 +15,29 @@
   font-weight: 600;
 }
 
+/* Main layout - side by side */
+.main-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.calendar-section {
+  flex: 2;
+  min-width: 0; /* Allows flex item to shrink below content size */
+}
+
+.controls-section {
+  flex: 1;
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 .calendar-container {
-  width: calc(100% - 40px);
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
   background-color: white;
@@ -331,8 +350,7 @@
 
 /* My Requests styling */
 .my-requests {
-  max-width: 800px;
-  margin: 32px auto;
+  width: 100%;
   padding: 24px;
   background-color: white;
   border-radius: 12px;
@@ -516,8 +534,7 @@
 
 /* Admin Approvals styling */
 .admin-approvals {
-  max-width: 800px;
-  margin: 32px auto;
+  width: 100%;
   padding: 24px;
   background-color: white;
   border-radius: 12px;
@@ -733,13 +750,24 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .main-layout {
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .controls-section {
+    min-width: 0;
+  }
+}
+
 @media (max-width: 768px) {
   .App {
     padding: 16px 20px;
   }
   
   .calendar-container {
-    width: calc(100% - 20px);
+    width: 100%;
   }
   
   .App h1 {
