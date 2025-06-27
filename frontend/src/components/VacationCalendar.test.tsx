@@ -13,7 +13,7 @@ describe('VacationCalendar Component', () => {
 
   it('allows selecting multiple vacation days', async () => {
     const vacationDays = new Set<string>()
-    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} onDayClick={mockOnDayClick} />)
+    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} vacationDayStatuses={new Map()} onDayClick={mockOnDayClick} />)
     const user = userEvent.setup()
     
     // Find current month days to work with
@@ -35,7 +35,7 @@ describe('VacationCalendar Component', () => {
 
   it('displays vacation days with proper styling', () => {
     const vacationDays = new Set(['2025-06-15', '2025-06-16'])
-    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} onDayClick={mockOnDayClick} />)
+    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} vacationDayStatuses={new Map()} onDayClick={mockOnDayClick} />)
     
     // Find days with vacation class
     const vacationElements = document.querySelectorAll('.calendar-day.vacation')
@@ -44,7 +44,7 @@ describe('VacationCalendar Component', () => {
 
   it('calls onDayClick with correct date when day is clicked', async () => {
     const vacationDays = new Set<string>()
-    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} onDayClick={mockOnDayClick} />)
+    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} vacationDayStatuses={new Map()} onDayClick={mockOnDayClick} />)
     const user = userEvent.setup()
     
     const currentMonthDays = document.querySelectorAll('.calendar-day.current-month')
@@ -58,7 +58,7 @@ describe('VacationCalendar Component', () => {
 
   it('renders day names in Japanese', () => {
     const vacationDays = new Set<string>()
-    const { container } = render(<VacationCalendar year={currentYear} vacationDays={vacationDays} onDayClick={mockOnDayClick} />)
+    const { container } = render(<VacationCalendar year={currentYear} vacationDays={vacationDays} vacationDayStatuses={new Map()} onDayClick={mockOnDayClick} />)
     
     const dayNames = ['月', '火', '水', '木', '金', '土', '日']
     dayNames.forEach(name => {
@@ -68,7 +68,7 @@ describe('VacationCalendar Component', () => {
 
   it('does not call onDayClick for empty days', async () => {
     const vacationDays = new Set<string>()
-    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} onDayClick={mockOnDayClick} />)
+    render(<VacationCalendar year={currentYear} vacationDays={vacationDays} vacationDayStatuses={new Map()} onDayClick={mockOnDayClick} />)
     const user = userEvent.setup()
     
     const emptyDays = document.querySelectorAll('.calendar-day.empty-day')

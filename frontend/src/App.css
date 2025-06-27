@@ -1,9 +1,11 @@
 .App {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
-  padding: 20px;
+  padding: 20px 40px;
   background-color: #f8fafc;
   min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .App h1 {
@@ -14,10 +16,11 @@
 }
 
 .calendar-container {
+  width: calc(100% - 40px);
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
-  max-width: 1200px;
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -26,12 +29,11 @@
 
 .calendar-header {
   display: grid;
-  grid-template-columns: 100px repeat(7, 1fr);
+  grid-template-columns: minmax(80px, 150px) repeat(7, 1fr);
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-weight: 600;
-  padding: 16px 0;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .month-name-header {
@@ -46,12 +48,13 @@
 
 .day-name {
   text-align: center;
-  padding: 0 8px;
+  padding: 12px 8px;
+  font-size: 1rem;
 }
 
 .calendar-row {
   display: grid;
-  grid-template-columns: 100px repeat(7, 1fr);
+  grid-template-columns: minmax(80px, 150px) repeat(7, 1fr);
   border-bottom: 1px solid #e2e8f0;
 }
 
@@ -67,7 +70,9 @@
   background-color: #f1f5f9;
   border-right: 1px solid #e2e8f0;
   color: #475569;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  padding: 12px 8px;
+  min-height: 44px;
 }
 
 .calendar-week {
@@ -79,20 +84,22 @@
 .calendar-day {
   border-right: 1px solid #e2e8f0;
   padding: 12px 8px;
+  min-height: 44px;
   cursor: pointer;
   background-color: white;
   transition: all 0.2s ease;
   text-align: center;
-  font-size: 0.9rem;
-  min-height: 40px;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 500;
 }
 
 .calendar-day:last-child {
   border-right: none;
 }
+
 
 .calendar-day:hover {
   background-color: #f8fafc;
@@ -138,8 +145,6 @@
 }
 
 .calendar-day.empty-day {
-  visibility: hidden;
-  border: none;
   background-color: transparent;
   cursor: default;
 }
@@ -147,4 +152,688 @@
 .calendar-day.current-month {
   font-weight: 600;
   color: #1e293b;
+}
+
+/* Status-based styling */
+.calendar-day.vacation.status-approved {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.calendar-day.vacation.status-pending-deletion {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.calendar-day.vacation.status-rejected {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.calendar-day.vacation.status-deletion-rejected {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+}
+
+.calendar-day.vacation.status-deleted {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3);
+  opacity: 0.7;
+}
+
+/* Blocked styling */
+.calendar-day.blocked {
+  cursor: not-allowed;
+  position: relative;
+}
+
+.calendar-day.blocked:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.calendar-day.blocked::after {
+  content: '🔒';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #64748b;
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #dc2626;
+  background-color: #fef2f2;
+  border-radius: 8px;
+  margin: 20px;
+  border: 1px solid #fecaca;
+}
+
+.error button {
+  margin-left: 12px;
+  padding: 8px 16px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.error button:hover {
+  background: #b91c1c;
+}
+
+.actions {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.save-button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.save-button:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.save-button.has-changes {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.save-button.has-changes:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
+}
+
+.save-message {
+  margin: 16px auto;
+  padding: 12px 24px;
+  border-radius: 8px;
+  max-width: 600px;
+  font-weight: 500;
+}
+
+.save-message.success {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.user-assignment {
+  margin: 24px auto;
+  text-align: center;
+  max-width: 300px;
+}
+
+.user-assignment label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #334155;
+  font-size: 1rem;
+}
+
+.user-assignment select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-assignment select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.user-assignment select:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* My Requests styling */
+.my-requests {
+  max-width: 800px;
+  margin: 32px auto;
+  padding: 24px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.my-requests h2 {
+  color: #334155;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.no-requests {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  padding: 40px;
+}
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.request-item {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.request-item:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.request-item.status-pending {
+  border-left: 4px solid #10b981;
+}
+
+.request-item.status-approved {
+  border-left: 4px solid #3b82f6;
+}
+
+.request-item.status-rejected {
+  border-left: 4px solid #ef4444;
+}
+
+.request-item.status-pending-deletion {
+  border-left: 4px solid #f59e0b;
+}
+
+.request-item.status-deletion-rejected {
+  border-left: 4px solid #8b5cf6;
+}
+
+.request-item.status-deleted {
+  border-left: 4px solid #6b7280;
+  opacity: 0.7;
+}
+
+.request-dates {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.request-status {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.status-badge {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.status-badge.status-pending {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.status-approved {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge.status-rejected {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.status-badge.status-pending-deletion {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-badge.status-deletion-rejected {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+
+.status-badge.status-deleted {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.request-assigned {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.deletion-reason {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+.deletion-request {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.deletion-reason-input {
+  width: 100%;
+  min-height: 60px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.deletion-reason-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.deletion-reason-input:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.request-deletion-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.request-deletion-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.request-deletion-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Admin Approvals styling */
+.admin-approvals {
+  max-width: 800px;
+  margin: 32px auto;
+  padding: 24px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.admin-approvals h2 {
+  color: #334155;
+  margin-bottom: 24px;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.no-pending {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  padding: 40px;
+}
+
+.pending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pending-item {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.pending-item:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pending-item.pending {
+  border-left: 4px solid #3b82f6;
+}
+
+.pending-item.pending-deletion {
+  border-left: 4px solid #f59e0b;
+}
+
+.request-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.request-type {
+  display: flex;
+  align-items: center;
+}
+
+.type-badge {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.pending-item.pending .type-badge {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.pending-item.pending-deletion .type-badge {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.request-id {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.request-details {
+  margin-bottom: 16px;
+}
+
+.request-details .request-dates {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.request-details .request-employee {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.request-details .request-assigned {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.request-details .deletion-reason {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #64748b;
+  font-style: italic;
+  background-color: #fef3c7;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #f59e0b;
+}
+
+.approval-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.approve-btn,
+.approve-deletion-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.approve-btn:hover:not(:disabled),
+.approve-deletion-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.reject-btn,
+.reject-deletion-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.reject-btn:hover:not(:disabled),
+.reject-deletion-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.approve-btn:disabled,
+.reject-btn:disabled,
+.approve-deletion-btn:disabled,
+.reject-deletion-btn:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Large screen optimization */
+@media (min-width: 1400px) {
+  .App {
+    padding: 20px 60px;
+  }
+  
+  .calendar-container {
+    width: calc(100% - 60px);
+    max-width: 1600px;
+  }
+  
+  .calendar-header {
+    grid-template-columns: minmax(120px, 180px) repeat(7, 1fr);
+    font-size: 1.1rem;
+  }
+  
+  .calendar-row {
+    grid-template-columns: minmax(120px, 180px) repeat(7, 1fr);
+  }
+  
+  .calendar-day {
+    padding: 16px 12px;
+    min-height: 50px;
+    font-size: 1.1rem;
+  }
+  
+  .day-name {
+    padding: 16px 12px;
+    font-size: 1.1rem;
+  }
+  
+  .month-name-column {
+    padding: 16px 12px;
+    min-height: 50px;
+    font-size: 1.1rem;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App {
+    padding: 16px 20px;
+  }
+  
+  .calendar-container {
+    width: calc(100% - 20px);
+  }
+  
+  .App h1 {
+    font-size: 2rem;
+    margin-bottom: 24px;
+  }
+  
+  .calendar-header {
+    grid-template-columns: minmax(60px, 80px) repeat(7, 1fr);
+    font-size: 0.8rem;
+  }
+  
+  .calendar-row {
+    grid-template-columns: minmax(60px, 80px) repeat(7, 1fr);
+  }
+  
+  .calendar-day {
+    padding: 8px 4px;
+    min-height: 36px;
+    font-size: 0.9rem;
+  }
+  
+  .day-name {
+    padding: 8px 4px;
+    font-size: 0.9rem;
+  }
+  
+  .month-name-column {
+    padding: 8px 4px;
+    min-height: 36px;
+    font-size: 0.9rem;
+  }
+  
+  .my-requests,
+  .admin-approvals {
+    margin: 20px auto;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .App {
+    padding: 12px 16px;
+  }
+  
+  .calendar-container {
+    width: calc(100% - 16px);
+  }
+  
+  .App h1 {
+    font-size: 1.75rem;
+  }
+  
+  .calendar-header {
+    grid-template-columns: 50px repeat(7, 1fr);
+    font-size: 0.75rem;
+  }
+  
+  .calendar-row {
+    grid-template-columns: 50px repeat(7, 1fr);
+  }
+  
+  .calendar-day {
+    padding: 6px 2px;
+    min-height: 32px;
+    font-size: 0.8rem;
+  }
+  
+  .day-name {
+    padding: 6px 2px;
+    font-size: 0.8rem;
+  }
+  
+  .month-name-column {
+    padding: 6px 2px;
+    min-height: 32px;
+    font-size: 0.8rem;
+  }
+  
+  .my-requests,
+  .admin-approvals {
+    margin: 16px auto;
+    padding: 12px;
+  }
+  
+  .approval-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .approve-btn,
+  .reject-btn,
+  .approve-deletion-btn,
+  .reject-deletion-btn {
+    width: 100%;
+  }
 }

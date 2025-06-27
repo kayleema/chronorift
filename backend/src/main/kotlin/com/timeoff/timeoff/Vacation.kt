@@ -4,6 +4,8 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Enumerated
+import jakarta.persistence.EnumType
 import java.time.LocalDate
 
 @Entity
@@ -13,5 +15,8 @@ data class Vacation(
     val employeeId: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val status: String // e.g., PENDING, APPROVED, REJECTED
+    @Enumerated(EnumType.STRING)
+    val status: VacationStatus = VacationStatus.PENDING,
+    val assignedTo: String? = null, // ID of the person who the vacation is assigned to
+    val deletionReason: String? = null // Reason provided when requesting deletion
 )

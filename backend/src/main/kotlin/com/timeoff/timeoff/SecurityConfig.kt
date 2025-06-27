@@ -23,6 +23,7 @@ class SecurityConfig {
             }
             .authorizeHttpRequests { authz ->
                 authz
+                    .requestMatchers("/api/auth/status").permitAll()
                     .requestMatchers("/api/vacation/**").authenticated()
                     .anyRequest().permitAll()
             }

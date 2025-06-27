@@ -20,9 +20,11 @@ This is a full-stack time-off management application with separate frontend and 
 - **Location**: `frontend/` directory  
 - **Framework**: React 19.1.0 with TypeScript and Vite
 - **Calendar UI**: Custom calendar component showing yearly view with Japanese day/month names
-- **API Communication**: Currently disabled - operates in client-only mode
-- **State Management**: Local React state with hooks
+- **API Communication**: Integrated with backend REST API
+- **Authentication**: Automatic redirect to OAuth2 login when unauthenticated
+- **State Management**: Local React state with async data loading
 - **Utils**: Calendar logic extracted to `src/utils/calendar.ts`
+- **Services**: API service layer with error handling and authentication checks
 
 ## Development Commands
 
@@ -43,12 +45,13 @@ npm run preview            # Preview production build
 
 ## Key Implementation Details
 
-- The frontend hardcodes `employeeId = "employee123"` for demonstration
-- Backend defaults to `"test-employee"` when authentication is null
-- Calendar shows vacation days with visual indicators
-- API mismatch: Frontend calls `/toggle` endpoint but backend only has CRUD operations
-- Backend uses Spring Security but has fallback authentication for testing
-- Both applications expect to run on different ports (frontend dev server + backend :8080)
+- **Frontend-Backend Integration**: App fetches vacation data on load and redirects to login if unauthenticated
+- **Authentication Flow**: OAuth2 with Google, automatic redirect for unauthenticated users
+- **Error Handling**: Comprehensive error states with retry functionality
+- **Data Conversion**: Backend vacation ranges converted to individual calendar days
+- **Loading States**: User-friendly loading and error messages
+- **Session Management**: Cookies used for session persistence
+- **Fallback Authentication**: Backend defaults to `"test-employee"` when authentication is null for testing
 
 ## Testing
 
@@ -58,6 +61,8 @@ npm run preview            # Preview production build
 - Run frontend tests with `npm test` from frontend directory
 
 ### Frontend Test Structure
-- `src/App.test.tsx`: Main component integration tests
+- `src/App.test.tsx`: Main component tests with mocked API calls
+- `src/App.integration.test.tsx`: Full integration tests for auth flow and data fetching
+- `src/services/api.test.ts`: API service unit tests with authentication scenarios
 - `src/utils/calendar.test.ts`: Calendar logic unit tests  
-- `src/components/VacationCalendar.test.tsx`: Vacation selection interaction tests
+- `src/components/VacationCalendar.test.tsx`: Vacation calendar component tests
